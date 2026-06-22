@@ -1,0 +1,3 @@
+[submodule "external/Gemini"]
+	path = external/Gemini
+	url = https://github.com/ExpressiveIntelligence/Gemini.git
