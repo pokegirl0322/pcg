@@ -1,5 +1,5 @@
 # Gemini Procedural Content Generation
-This is the homepage for my public devlog
+Follow the resurrection and augumentation of Gemini Answer Set Programming (ASP) using an LLM driven prompt intent layer to procedurally generate Mario levels in this devlog!
 
 ## Devlog Navigation
 * [Field Literature](devlog/literature_review.md)
