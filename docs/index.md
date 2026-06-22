@@ -2,4 +2,5 @@
 This is the homepage for my public devlog
 
 ## Devlog Navigation
-* [Week 1: Field Literature](devlog/literature_review.md)
+* [Field Literature](devlog/literature_review.md)
+* [Implementation](devlog/implementation.md)
