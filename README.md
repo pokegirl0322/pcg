@@ -1,7 +1,7 @@
-# pcg — LLM-Augmented Gemini for Procedural Mario Level Generation
+# pcg
 
-Research project on the resurrection and augmentation of **Gemini** — an Answer Set
-Programming (ASP) based abstract game generator — with an LLM-driven prompt → intent
+Research project on the resurrection and augmentation of **Gemini** an Answer Set
+Programming (ASP) based abstract game generator with an LLM-driven prompt → intent
 layer, applied to procedurally generating Super Mario levels.
 
 This repository contains **only this project's own work**. Gemini itself is referenced as
@@ -34,10 +34,3 @@ In brief, with the `potassco` conda environment active:
 cd external/Gemini/asp
 python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project
 ```
-
-## Attribution & licensing
-
-This project builds on Gemini by the Expressive Intelligence Studio. Gemini currently
-ships **without an explicit license**, so its source is referenced (submodule), never
-redistributed here. Full provenance, citations, and third-party license notes are in
-[`NOTICE.md`](NOTICE.md).
