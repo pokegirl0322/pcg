@@ -16,18 +16,6 @@ references Gemini for academic research and does not redistribute its source. An
 reusing this project must obtain Gemini independently from upstream and comply with the
 authors' terms.
 
-### Please cite
-
-- Adam Summerville, Chris Martens, Ben Samuel, Joe Osborn, Noah Wardrip-Fruin, and
-  Michael Mateas. "Gemini: Bidirectional Generation and Analysis of Games via ASP."
-  *AIIDE*, 2018.
-- Joseph C. Osborn, Melanie Dickinson, Barrett Anderson, Adam Summerville, Jill Denner,
-  David Torres, Noah Wardrip-Fruin, and Michael Mateas. "Is Your Game Generator Working?
-  Evaluating Gemini, an Intentional Generator." *AIIDE*, 2019.
-- Max Kreminski, Melanie Dickinson, Joseph C. Osborn, Adam Summerville, Michael Mateas,
-  and Noah Wardrip-Fruin. "Germinate: A Mixed-Initiative Casual Creator for Rhetorical
-  Games." *AIIDE*, 2020.
-
 ## Third-party libraries bundled inside Gemini
 
 Gemini's interpreter bundles third-party code under its own licenses. These live in the
