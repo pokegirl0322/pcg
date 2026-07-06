@@ -41,3 +41,16 @@ Observations (recorded, not fixed):
 
 success!!
 
+**Date:** 7.5.26
+
+Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at their 2020 baseline versions to isolate the axis. Took three tries to get a valid environment, failures listed below, not code related:
+
+1. `conda install -n <env> python=3.9` (no channel flag) silently failed to solve — `LibMambaUnsatisfiableError` on `numpy-base`, because it was resolving against the `defaults` channel only, not `conda-forge` where the original env's packages actually came from. Lesson: a failed solve doesn't touch the env, so always re-check `python --version` after — I nearly treated a no-op as a successful bump.
+2. Adding `-c conda-forge` still failed — the cloned env had leftover Python-3.7-specific builds (`pip`, `setuptools`, `wheel`, `wincertstore`, all `py37`-tagged) from the original `defaults`-channel install, and `conda install` won't proactively upgrade packages it wasn't asked to touch. Those pins made 3.9 unsatisfiable.
+3. Fix: abandoned the clone for this hop and built a fresh env from scratch (`conda create -n gem-step1-py39 -c conda-forge python=3.9 numpy=1.19.5 deap=1.3.1 clingo=5.4.1 pip`), which resolves cleanly with no legacy ABI cruft.
+
+Verified versions: `python 3.9.23, numpy 1.19.5, deap 1.3.1, clingo 5.4.1`
+
+Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIABLE`, one model, same benign "atom does not occur in any rule head" grounding warnings as the 2020 baseline (pre-existing, unrelated to the version bump). Then `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` ran to completion — clingo subprocess call, JSON parse, DEAP genetic-algorithm loop, and file write all succeeded for all 5 games, no tracebacks. No `typing` import failure, no DEAP `creator.create` reimport error, no clingo output-format issue observed.
+
+Known-breaks checklist so far: **typing pip dep** — not yet hit, not yet removed (still todo). **clingo 5.5+ API drift** — not yet exercised, clingo still at 5.4.x this step. **deap creator reimport** — not triggered at this step. **tr pipe** — not relevant to this axis.
