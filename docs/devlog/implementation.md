@@ -42,7 +42,7 @@ success!!
 
 **Date:** 7.5.26
 
-Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at their 2020 baseline versions to isolate the axis. Took three tries to get a valid environment, failures listed below, not code related:
+Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at their 2020 baseline versions to isolate the axis. Isolation was done to ensure that if regression happened, I could pinpoint it on a specific dependency upgrade. Took three tries to get a valid environment, failures listed below, not code related:
 
 1. `conda install -n <env> python=3.9` (no channel flag) silently failed to solve - `LibMambaUnsatisfiableError` on `numpy-base`, because it was resolving against the `defaults` channel only, not `conda-forge` where the original env's packages actually came from. A failed solve doesn't touch the env, so always re-check `python --version` after as I nearly treated a no-op as a successful bump.
 
