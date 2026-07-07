@@ -50,3 +50,11 @@ Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at th
 Verified versions: `python 3.9.23, numpy 1.19.5, deap 1.3.1, clingo 5.4.1`
 
 Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIABLE`, one model, same benign "atom does not occur in any rule head" grounding warnings as the 2020 baseline (pre-existing, unrelated to the version bump). Then `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 project` ran to completion including clingo subprocess call, JSON parse, DEAP genetic-algorithm loop, and file write all succeeded for all 5 games, no tracebacks. No `typing` import failure, no DEAP `creator.create` reimport error, no clingo output-format issue observed.
+
+Step 2: clingo 5.4.1→5.7.1, holding python=3.9, numpy=1.19.5, deap=1.3.1 from Step 1. Hit the missing-channel error a third time (`conda install -n gem-step1-py39 clingo=5.7` with no `-c conda-forge` → `PackagesNotFoundError`); fixed with `-c conda-forge` and it resolved cleanly since this was a clone-forward from an already-conda-forge-only env, no ABI conflicts this time.
+
+Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIABLE`, same grounding warnings as baseline. `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors.
+
+**Notable, not a break:** solve time went from ~9-11s (clingo 5.4) to ~30s (clingo 5.7) on the identical `dinner_intent.lp` run. Could be a solver heuristic/default change between versions, could be noise from one run. Should re-run a couple times on each version to see if it's consistent before writing it up as a real regression.
+
+
