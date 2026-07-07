@@ -57,4 +57,8 @@ Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIA
 
 **Notable, not a break:** solve time went from ~9-11s (clingo 5.4) to ~30s (clingo 5.7) on the identical `dinner_intent.lp` run. Could be a solver heuristic/default change between versions, could be noise from one run. Should re-run a couple times on each version to see if it's consistent before writing it up as a real regression.
 
+Step 3: numpy 1.19.5→1.26.4, holding python=3.9, clingo=5.7.1, deap=1.3.1. Clean solve (clingo alone doesn't exercise numpy, so this only confirms clingo/grounding still fine, expected, unrelated to this axis). `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors. numpy 1.26.4 is the practical ceiling while deap stays at 1.3.1 (which pins numpy <2.0a0).
+
+
+
 
