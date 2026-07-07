@@ -45,7 +45,10 @@ success!!
 Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at their 2020 baseline versions to isolate the axis. Took three tries to get a valid environment, failures listed below, not code related:
 
 1. `conda install -n <env> python=3.9` (no channel flag) silently failed to solve - `LibMambaUnsatisfiableError` on `numpy-base`, because it was resolving against the `defaults` channel only, not `conda-forge` where the original env's packages actually came from. A failed solve doesn't touch the env, so always re-check `python --version` after as I nearly treated a no-op as a successful bump.
-2. Adding `-c conda-forge` still failed: the cloned env had leftover Python-3.7-specific builds (`pip`, `setuptools`, `wheel`, `wincertstore`, all `py37`-tagged) from the original `defaults`-channel install, and `conda install` won't proactively upgrade packages it wasn't asked to touch. Those pins made 3.9 unsatisfiable. 3. Fix: abandoned the clone for this hop and built a fresh env from scratch (`conda create -n gem-step1-py39 -c conda-forge python=3.9 numpy=1.19.5 deap=1.3.1 clingo=5.4.1 pip`), which resolved cleanly with no legacy ABI cruft.
+
+2. Adding `-c conda-forge` still failed: the cloned env had leftover Python-3.7-specific builds (`pip`, `setuptools`, `wheel`, `wincertstore`, all `py37`-tagged) from the original `defaults`-channel install, and `conda install` won't proactively upgrade packages it wasn't asked to touch. Those pins made 3.9 unsatisfiable.
+
+3. Fix: abandoned the clone for this hop and built a fresh env from scratch (`conda create -n gem-step1-py39 -c conda-forge python=3.9 numpy=1.19.5 deap=1.3.1 clingo=5.4.1 pip`), which resolved cleanly with no legacy ABI cruft.
 
 Verified versions: `python 3.9.23, numpy 1.19.5, deap 1.3.1, clingo 5.4.1`
 
@@ -55,10 +58,15 @@ Step 2: clingo 5.4.1→5.7.1, holding python=3.9, numpy=1.19.5, deap=1.3.1 from 
 
 Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIABLE`, same grounding warnings as baseline. `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors.
 
-**Notable, not a break:** solve time went from ~9-11s (clingo 5.4) to ~30s (clingo 5.7) on the identical `dinner_intent.lp` run. Could be a solver heuristic/default change between versions, could be noise from one run. Should re-run a couple times on each version to see if it's consistent before writing it up as a real regression.
+**Notable, not a break:** solve time went from ~9-11s (clingo 5.4) to ~30s (clingo 5.7) on the identical `dinner_intent.lp` run. Likely noise between runs, as I reran when upgrading numpy and solve time went to ~15s (clingo and numpy are independent).
 
 Step 3: numpy 1.19.5→1.26.4, holding python=3.9, clingo=5.7.1, deap=1.3.1. Clean solve (clingo alone doesn't exercise numpy, so this only confirms clingo/grounding still fine, expected, unrelated to this axis). `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors. numpy 1.26.4 is the practical ceiling while deap stays at 1.3.1 (which pins numpy <2.0a0).
 
+Step 4: deap 1.3.1→1.4.2. Could not reach deap 1.4.3/1.4.4 without a further Python bump: deap's newest releases have moved their own Python floor up, so "latest deap" and "stay on Python 3.9" are mutually exclusive right now.
+
+Smoke test clean: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIABLE`; `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no tracebacks. Notably, the anticipated `creator.create` reimport error did not occur here.
+
+**All four planned Stage B axes are now bumped and green**: Python 3.7→3.9, clingo 5.4→5.7.1, numpy 1.19.5→1.26.4, deap 1.3.1→1.4.2.
 
 
 
