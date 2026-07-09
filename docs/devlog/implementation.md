@@ -84,7 +84,7 @@ Full pipeline as currently designed:
 (2) A pretrained general-use LLM, via API with structured-output/schema enforcement, translates the NL into a Gemini-specific structured schema (Entities, Resources, Relations, and a fixed library of constraint patterns derived from cataloging the existing intent files).  
 (3) A deterministic Python compiler (no LLM involved) translates the validated schema into Gemini intent .lp syntax with one function per constraint pattern, recording a provenance map from each emitted ASP line back to its source schema entry.   
 (4) The compiled intent runs through clingo alongside generation.lp/generation_constraints.lp.   
-(5) If UNSAT: binary-search localization (adapted from debug_rules.py) identifies the offending rule(s), the provenance map traces this back to the responsible schema entry, and a feedback prompt (original NL intent + previous schema + localized failure) goes back to the LLM for a revised schema --> loop back to step 3   
+(5) If UNSAT: binary-search localization (debug_rules.py) identifies the offending rule(s), the provenance map traces this back to the responsible schema entry, and a feedback prompt (original NL intent + previous schema + localized failure) goes back to the LLM for a revised schema --> loop back to step 3   
 (6) If SAT: run Gemini's own bidirectional proceduralist-reading analysis on the result and diff the deduced readings against the schema's declared readings as a second consistency check. A feedback prompt (original intent + declared readings + deduced readings) goes back to LLM to produce a revised schema if it does not match with a  loop back to step 3. Otherwise, move to step 7.  
 (7) The final compiled intent proceeds unchanged into the existing pipeline.  
 
