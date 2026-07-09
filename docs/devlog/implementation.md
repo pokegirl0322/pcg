@@ -17,7 +17,7 @@ Environment:
 - Full console logs: `<path to the teed .log files>`
 
 Commands (verbatim):
-clingo generation/gemini.lp intents/dinner_intent.lp
+clingo generation/gemini.lp intents/dinner_intent.lp  
 python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project
 
 Results:
@@ -46,9 +46,9 @@ Started Stage B: bumping Python 3.7→3.9 first, holding clingo/numpy/deap at th
 
 1. `conda install -n <env> python=3.9` (no channel flag) silently failed to solve - `LibMambaUnsatisfiableError` on `numpy-base`, because it was resolving against the `defaults` channel only, not `conda-forge` where the original env's packages actually came from. A failed solve doesn't touch the env, so always re-check `python --version` after as I nearly treated a no-op as a successful bump.
 
-2. Adding `-c conda-forge` still failed: the cloned env had leftover Python-3.7-specific builds (`pip`, `setuptools`, `wheel`, `wincertstore`, all `py37`-tagged) from the original `defaults`-channel install, and `conda install` won't proactively upgrade packages it wasn't asked to touch. Those pins made 3.9 unsatisfiable.
+2. Adding `-c conda-forge` still failed: the cloned env had leftover Python-3.7-specific builds (`pip`, `setuptools`, `wheel`, `wincertstore`, all `py37`-tagged) from the original `defaults`-channel install, and `conda install` won't proactively upgrade packages it wasn't asked to touch, making an upgrade to 3.9 impossible.
 
-3. Fix: abandoned the clone for this hop and built a fresh env from scratch (`conda create -n gem-step1-py39 -c conda-forge python=3.9 numpy=1.19.5 deap=1.3.1 clingo=5.4.1 pip`), which resolved cleanly with no legacy ABI cruft.
+3. Fix: abandoned the clone for this hop and built a fresh env from scratch (`conda create -n gem-step1-py39 -c conda-forge python=3.9 numpy=1.19.5 deap=1.3.1 clingo=5.4.1 pip`).
 
 Verified versions: `python 3.9.23, numpy 1.19.5, deap 1.3.1, clingo 5.4.1`
 
@@ -60,7 +60,7 @@ Smoke test: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SATISFIA
 
 **Notable, not a break:** solve time went from ~9-11s (clingo 5.4) to ~30s (clingo 5.7) on the identical `dinner_intent.lp` run. Likely noise between runs, as I reran when upgrading numpy and solve time went to ~15s (clingo and numpy are independent).
 
-Step 3: numpy 1.19.5→1.26.4, holding python=3.9, clingo=5.7.1, deap=1.3.1. Clean solve (clingo alone doesn't exercise numpy, so this only confirms clingo/grounding still fine, expected, unrelated to this axis). `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors. numpy 1.26.4 is the practical ceiling while deap stays at 1.3.1 (which pins numpy <2.0a0).
+Step 3: numpy 1.19.5→1.26.4, holding python=3.9, clingo=5.7.1, deap=1.3.1. Clean solve (clingo alone doesn't exercise numpy, so this only confirms clingo/grounding still fine). `python simulate.py temp 5 generation/gemini.lp intents/dinner_intent.lp 10 --project` completed all 5 games, no errors. numpy 1.26.4 is the practical ceiling while deap stays at 1.3.1 (which pins numpy <2.0a0).
 
 Step 4: deap 1.3.1→1.4.2. Could not reach deap 1.4.3/1.4.4 without a further Python bump: deap's newest releases have moved their own Python floor up, so "latest deap" and "stay on Python 3.9" are mutually exclusive right now.
 
@@ -68,5 +68,29 @@ Smoke test clean: `clingo generation/gemini.lp intents/dinner_intent.lp` → `SA
 
 **All four planned Stage B axes are now bumped and green**: Python 3.7→3.9, clingo 5.4→5.7.1, numpy 1.19.5→1.26.4, deap 1.3.1→1.4.2.
 
+**Date:** 7.9.26  
 
+I decided against a one-shot translation for the prompt --> intent layer, going with a solver-feedback repair loop instead. The one-shot translation layer was too unpredictable 
 
+**LLM→ASP Failure Modes and Design Response**
+1. General pre-trained LLMs generating raw ASP achieve high syntactic accuracy (compiles, runs), but inconsistent  semantic accuracy (wrong answer sets). Fine-tuning can solve for this, but is out of project's scope. Therefore, as part of my design, the LLM will not generate raw ASP, instead filling in a structured schema with a deterministic compiler narrowing risk to schema-field selection. While AMR and CNL were both valid intermediaries, a schema was ultimately chosen because both AMR and CNL are general purpose with no specific knowledge of Gemini's specific predicate vocaburary, needing a general to specific mapping regardless.
+2. Existing pipeline translation (fact→rule→constraint→assembly) had no mechanisms to catch errors introduced early and the AMR parsing mistakes directly are represented onto wrong constraints with nothing to stop them. The design response was to choose a solver-feedback repair loop over one-shot translation specifically so clingo's actual output could be the check with UNSAT triggering a loop back to the LLM for revision (with the use of `debug_rules.py`'s binary-search localization and a provenance map to point at a specific schema field).
+3.  LLMs struggle to construct complete correct answer sets via non-monotonic reasoning, especially on complex/real-world programs but perform relatively better on entailment/classification-style tasks. I'm ensuring that the LLM never computes an answer set with its role (schema-filling, and in the repair loop, schema revision given a specific error) being deliberately closer to extraction and verification-style reasoning than to open-ended answer-set generation, using it's strengths.
+4.  Open gap: none of the three papers address fuzzy/creative intent (only specific subsets, like generic programming patterns, bounded combinatorial puzzles, benchmarch ASP problems). Game design inherently is open-ended and because of that, has no single right answer to evaluate the ability of the generator without subjective human viewpoints. UNSAT can catch structural errors, but ultimately cannot tell whether the resulting program follows the human intent. This can be partially addressed by Gemini's own bidirectional proceduralist-reading analysis (a second-layer check beyond UNSAT that can close the gap between schema-game) and the existing human-evaluation protocol (Osborn et al.). However, there is no automated fix for prompt to schema mistranslation, beyond fine-tuning.
+
+**Pipeline (as of now)**
+Full pipeline as currently designed: 
+(1) user provides a Natural Language(NL) design intent. 
+(2) A pretrained general-use LLM, via API with structured-output/schema enforcement, translates the NL into a Gemini-specific structured schema (Entities, Resources, Relations, and a fixed library of constraint patterns derived from cataloging the existing intent files).
+(3) A deterministic Python compiler (no LLM involved) translates the validated schema into Gemini intent .lp syntax with one function per constraint pattern, recording a provenance map from each emitted ASP line back to its source schema entry. 
+(4) The compiled intent runs through clingo alongside generation.lp/generation_constraints.lp. 
+(5) If UNSAT: binary-search localization (adapted from debug_rules.py) identifies the offending rule(s), the provenance map traces this back to the responsible schema entry, and a feedback prompt (original NL intent + previous schema + localized failure) goes back to the LLM for a revised schema --> loop back to step 3 
+(6) If SAT: run Gemini's own bidirectional proceduralist-reading analysis on the result and diff the deduced readings against the schema's declared readings as a second consistency check. A feedback prompt (original intent + declared readings + deduced readings) goes back to LLM to produce a revised schema if it does not match with a  loop back to step 3. Otherwise, move to step 7.
+(7) The final compiled intent proceeds unchanged into the existing pipeline.
+
+**Evaluation/Verification Methodology (as of now)**
+Mechanical correctness (compiler output, clingo SAT/UNSAT) is fully automated. Testing the compiler against hand-built schema instances, checked against existing known-good intent files (dinner_intent.lp, dummy_intent.lp, etc.) is a valid option. Semantic fidelity (aka did the LLM's schema extraction capture what the NL prompt meant) is only partially automatable, via a curated set of NL-prompt/schema pairs with known-correct answers (same idea as LLASP's template pairs) (currently unsure if this is in scope), otherwise will require running the compiled intent through the existing downstream pipeline (generation.lp/clingo → simulate.py's GA → interpreter/'s Phaser renderer) and inspecting or playing the result. I am not building new visualization tooling, since interpreter/ (and server/+Germinate, if needed later) already exists for this. Playability/design quality is inherently a human-judgment layer and cannot be evaluated autonomously (yet). Osborn et al.'s player-study protocol, already validated on Gemini specifically, will be adaptated if a rigorous evaluation becomes necessary. 
+
+**Build order**: catalog the vocabulary across all 17 intent files → design the schema → write the compiler + provenance map → test the compiler alone against known-good intents before adding the LLM → wire up the LLM/structured-output layer → run a baseline end-to-end test → adapt UNSAT localization → wire the repair loop → iterate against varied prompts.
+
+In this order, I hope to ensure that any errors from the testing runs will result due to a LLM translation to schema issue rather than a schema to asp intent (reducing unknowns when something breaks down, especially considering LLM debugging can involve varied outputs). 
