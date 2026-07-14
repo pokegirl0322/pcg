@@ -104,5 +104,5 @@ Entity / Resource --> would include id + label(s). entity only has id and label,
 RequiredFact --> either a reading-type quality (from the ~25-value vocabulary above, unary/relational/compound as applicable) or a bare entity reference  
 LabelRule --> target, label, visibility, triggering condition  
 LabelEnum --> target + acceptable-label list (enumeration/enforcement)  
-CountComparison --> target, comparator, value (the total_count pattern)
+CountComparison --> target, comparator, value (the total_count pattern)  
 RawASP --> escape hatch, currently unsure how this would work and what it could contain and how the compiler would translate it (given I dont want the llm to write any raw asp). A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). I do not believe I know enough about ASP currently to decide. 
