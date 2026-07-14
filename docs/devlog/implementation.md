@@ -99,10 +99,10 @@ In this order, I hope to ensure that any errors from the testing runs will resul
 
 **Date:** 7.14.26  
 **Categories of schema** (based on intents/other related files):  
-Bounds --> the 12 #const fields  
-Entity / Resource --> would include id + label(s). entity only has id and label, but resource has an additional visibility field  
-RequiredFact --> either a reading-type quality (from the ~25-value vocabulary above, unary/relational/compound as applicable) or a bare entity reference  
-LabelRule --> target, label, visibility, triggering condition  
-LabelEnum --> target + acceptable-label list (enumeration/enforcement)  
-CountComparison --> target, comparator, value (the total_count pattern)  
-RawASP --> escape hatch, currently unsure how this would work and what it could contain and how the compiler would translate it (given I dont want the llm to write any raw asp). A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). I do not believe I know enough about ASP currently to decide. 
+1. Bounds --> the 12 #const fields  
+2. Entity / Resource --> would include id + label(s). entity only has id and label, but resource has an additional visibility field  
+3. RequiredFact --> either a reading-type quality (from the ~25-value vocabulary above, unary/relational/compound as applicable) or a bare entity reference  
+4. LabelRule --> target, label, visibility, triggering condition  
+5. LabelEnum --> target + acceptable-label list (enumeration/enforcement)  
+6. CountComparison --> target, comparator, value (the total_count pattern)  
+7. RawASP --> escape hatch, currently unsure how this would work and what it could contain and how the compiler would translate it (given I dont want the llm to write any raw asp). A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). I do not believe I know enough about ASP currently to decide. 
