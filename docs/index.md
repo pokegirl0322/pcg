@@ -4,3 +4,5 @@ Follow the resurrection and augumentation of Gemini Answer Set Programming (ASP)
 ## Devlog Navigation
 * [Field Literature](devlog/literature_review.md)
 * [Implementation](devlog/implementation.md)
+
+pattern cataloging is available [here](pattern_catalog.md)
