@@ -9,7 +9,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `#const <name> = <int>.` 
 **Varies:** the integer values only.  
 **Fixed:** the 12 constant names themselves (min/max entities, resources, outcomes, timers, end_outcomes, resource_change_per, conditions_per). Need to confirm if all files set all 12.
-**Occurrences:** dinner_intent (12/12)
+**Occurrences:** dinner_intent (12/12), dummy_intent(12/12)
 
 ## Pattern: required_quality  
 **Description:** Requires a named reading-quality to hold somewhere in the generated game. Engine defines the semantics; intent supplies only the name.  
@@ -87,7 +87,11 @@ revisit if more than 2 files show these shapes.
 - **dinner_intent is_consumed block:** invents a new predicate (4 lines: 1 derivation + 3 enforcement constraints) encoding "resource gain must coincide with consuming the food entity."  
 - **dinner_intent cooldown-conditioned label rules:** label assignment conditioned on cooldown() + a player_model. Could be a candidate for a future conditional label_rule variant.  
 
+## Anomalies
+dummy_intent: :- not cooldown(_,_). — arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
+
 ## Coverage tracker
 | File | Status |
 |---|---|
 | dinner_intent.lp | done |
+| dummy_intent.lp | done |
