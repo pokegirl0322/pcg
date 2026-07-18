@@ -98,6 +98,9 @@ Will need to see if LLM prompting will cause it to choose escape hatch over exis
 In this order, I hope to ensure that any errors from the testing runs will result due to a LLM translation to schema issue rather than a schema to asp intent (reducing unknowns when something breaks down, especially considering LLM debugging can involve varied outputs). 
 
 **Date:** 7.14.26  
+
+**The below is the initial hypothesis based upon a preliminary viewing of the intent files and related documents, but the schema will be based on the pattern cataloging done across all of the intent files.**  
+
 **Categories of schema** (based on intents/other related files):  
 1. Bounds --> the 12 #const fields  
 2. Entity / Resource --> would include id + label(s). entity only has id and label, but resource has an additional visibility field  
@@ -105,4 +108,4 @@ In this order, I hope to ensure that any errors from the testing runs will resul
 4. LabelRule --> target, label, visibility, triggering condition  
 5. LabelEnum --> target + acceptable-label list (enumeration/enforcement)  
 6. CountComparison --> target, comparator, value (the total_count pattern)  
-7. RawASP --> escape hatch. A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). However, it likely will require further investigation because designing a sufficiently expressive but constrained ASP representation depends on deeper understanding of Gemini's predicate structure and ASP semantics. For the current implementation, I will start with just logging unmatched cases and returning that to the LLM. 
+7. RawASP --> escape hatch. A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). However, it likely will require further investigation because designing a sufficiently expressive but constrained ASP representation depends on deeper understanding of Gemini's predicate structure and ASP semantics. For the current implementation, I will start with just logging unmatched cases and returning that to the LLM.
