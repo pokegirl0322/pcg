@@ -99,9 +99,9 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 
 ## Pattern: forbidden_control_result  
 **Description:** Forbids control events with a result modifying a resource in a given direction.  
-**Shape:** `:- precondition(control_event(_),O), result(O,modify(<direction>,resource(<resource>))).`  
-**Varies:** direction, resource  
-**Occurrences** lecture_intent(increase/r(1)), lecture_intent_attract(increase/r(1))  
+**Shape:** `:- precondition(control_event(_),O), result(O,modify(<direction>,resource(<resource>))).`   
+**Varies:** direction, resource   
+**Occurrences** lecture_intent(increase/r(1)), lecture_intent_attract(increase/r(1))   
 
 ## Pattern: forbidden_trivial_result  
 **Description:** Defines a named resource as not being able to be modified in a given direction by any free/trivial outcome  
