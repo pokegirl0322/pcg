@@ -9,20 +9,20 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `#const <name> = <int>.` 
 **Varies:** the integer values only.  
 **Fixed:** the 12 constant names themselves (min/max entities, resources, outcomes, timers, end_outcomes, resource_change_per, conditions_per). Need to confirm if all files set all 12.
-**Occurrences:** dinner_intent (12/12), dummy_intent(12/12)
+**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12)
 
 ## Pattern: required_quality  
-**Description:** Requires a named reading-quality to hold somewhere in the generated game. Engine defines the semantics; intent supplies only the name.  
+**Description:** Requires a named reading-quality to hold somewhere in the generated game.  
 **Shape:** `required(<quality>).`  
-**Varies:** the quality name — drawn from the readings.lp vocabulary (~25 values, e.g. sharing, maintenance, help, hurt, tradeoff...).  
+**Varies:** the quality name which drawn from the readings.lp vocabulary (~25 values, e.g. sharing, maintenance, help, hurt, tradeoff...).  
 **Fixed:** everything else.  
-**Occurences:** dinner_intent (sharing, maintenance).  
+**Occurences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance)
 
 ## Pattern: entity_label / resource_label  
 **Description:** Assigns a display label, resources adds a visibility mode.  
 **Shape:** `label(<entity_id>, <label>).` / `label(<resource_id>, <label>, <visibility>).`  
 **Varies:** id, label; visibility (resource only: write | private | read).  
-**Occurences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is *conditional*, see label_rule).  
+**Occurences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is *conditional*, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only)
 
 ## Pattern: label_rule  
 **Description:** Derive this label when this reading holds  
@@ -41,7 +41,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `:- not reading(<quality>, <target>).`  
 **Varies:** quality; target: which has two shapes so far: unary (`resource(r(1))`) and relational (`relation(entity(e(1)),entity(e(2)))`).  
 **Fixed:** the `:- not reading(...)` frame.  
-**Occurences:** dinner_intent: good/resource (unary), sharing/relation (relational), maintenance/resource (unary).  
+**Occurences:** dinner_intent: good/resource (unary), sharing/relation (relational), maintenance/resource (unary), dean_intent: maintenance/resource (unary), survive/entity(unary), help/relation(relational), good/resource (unary), difficulty/resource (unary)
 **Note:** compound readings (goal(produce), stakes(high)) exist in readings.lp but no instance seen yet in files cataloged so far.  
 
 ## Pattern: label_enum  
@@ -58,11 +58,11 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Varies:** entity, comparator (!=, >, < seen in comments), value.  
 **Occurences:** dinner_intent (e(2) != 3; commented-out >/< suggest range form intended by original authors).  
 
-## Pattern: required_property  
-**Description:** Requires the named engine-derived property to hold for the entity  
-**Shape:** `:- not <property>(entity(<entity>)).`  
-**Varies:** entity, property  
-**Occurences:** dinner_intent (constant/e(2)), only property observed so far is constant.  
+## Pattern: property_constraint  
+**Description:** Requires or forbids named engine-derived property to hold for the entity  
+**Shape:** `:- not <property>(entity(<entity>)).` \ `:- <property>(entity(<entity>)).`
+**Varies:** entity, property, polarity  
+**Occurences:** dinner_intent (constant/e(2)), dean_intent (many/e(1))    
 
 ## Pattern: forbidden_pool_count  
 **Description:** Forbids the named entity's number of spawn pools from falling within [<low>, <high>], inclusive. Observed use: low = high = 1, i.e., never exactly one pool, must be zero or several  
@@ -74,7 +74,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Requires the game to contain the named mode change.  
 **Shape:** `:- not action(mode_change(<mode>)).`  
 **Varies:** mode: can consist of narrative_gating, narrative_progress, game_loss, game_win (as in generation_atoms.lp)  
-**Occurences:** dinner_intent (narrative_gating), appeared with mode_change_cap  
+**Occurences:** dinner_intent (narrative_gating), appeared with mode_change_cap, dean_intent (game_win) x2
 
 ## Pattern: mode_change_cap  
 **Description:** caps mode_change actions (of any mode) at <low> − 1.  
@@ -82,16 +82,30 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Varies:** low  
 **Occurences:** dinner_intent (2), appeared together with required_mode_change  
 
+## Pattern: required_predicate  
+**Description:** Requires a named engine predicate to be true.  
+**Shape:** `:- not <predicate>(<arguments>).`  
+**Varies:** predicate name, arguments  
+**Occurences:** dean_intent (same_movement/e(2)/e(3), computer_controls/e(2))
+
+## Pattern: vocab_declaration
+**Description:** Adds a relationship between engine symbols used by later rules.
+**Shape:** <relation>(<value1>,<value2>).
+**Varies:** relation, values
+**Occurences:** dean_intent(opposite on increase/decrease)
+
 ## No pattern yet  
 revisit if more than 2 files show these shapes.  
 - **dinner_intent is_consumed block:** invents a new predicate (4 lines: 1 derivation + 3 enforcement constraints) encoding "resource gain must coincide with consuming the food entity."  
-- **dinner_intent cooldown-conditioned label rules:** label assignment conditioned on cooldown() + a player_model. Could be a candidate for a future conditional label_rule variant.  
+- **dinner_intent cooldown-conditioned label rules:** label assignment conditioned on cooldown() + a player_model. Could be a candidate for a future conditional label_rule variant.
+- **opposite_results_on_overlap** creates a new predicate (based on 2 preconditions & 2 results) encoding "two entities overlap with the same polarity, and both overlap conditions produce modifications to the same resource meaning those modifications must be opposites"
 
 ## Anomalies
-dummy_intent: :- not cooldown(_,_). — arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
+dummy_intent: :- not cooldown(_,_). is an arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
 
 ## Coverage tracker
 | File | Status |
 |---|---|
 | dinner_intent.lp | done |
 | dummy_intent.lp | done |
+| dean_intent.lp | done |
