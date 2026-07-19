@@ -93,10 +93,10 @@ revisit if more than 2 files show these shapes.
 - **dinner_intent is_consumed block:** invents a new predicate (4 lines: 1 derivation + 3 enforcement constraints) encoding "resource gain must coincide with consuming the food entity."  
 - **dinner_intent cooldown-conditioned label rules:** label assignment conditioned on cooldown() + a player_model. Could be a candidate for a future conditional label_rule variant.
 - **dean_intent opposite_results_on_overlap block** creates a supporting vocabulary fact, a derived predicate (based on two overlap preconditions and two result predicates) encoding that e(1) overlaps both e(2) and e(3) and that those overlaps produce opposite modifications to the same resource, and an integrity constraint requiring the derived predicate to hold.
-- **dean_intent outcome-cap block**: invents outcomes/1 using an aggregate assignment (N = {outcome(O)}) to count all generated outcomes, then enforces that the total does not exceed max_outcomes. The engine already bounds numbered outcomes through max_outcome(M), so this block captures all outcomes, including those outside the numbered series like control-scheme outcomes.
+- **dean_intent outcome-cap block**: invents outcomes/1 using an aggregate assignment (`N = {outcome(O)}`) to count all generated outcomes, then enforces that the total does not exceed max_outcomes. The engine already bounds numbered outcomes through max_outcome(M), so this block captures all outcomes, including those outside the numbered series like control-scheme outcomes.
 
 ## Anomalies
-dummy_intent: :- not cooldown(_,_). is an arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
+dummy_intent: `:- not cooldown(_,_).` is an arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
 
 ## Coverage tracker
 | File | Status |
