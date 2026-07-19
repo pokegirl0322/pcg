@@ -104,10 +104,10 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Occurrences** lecture_intent(increase/r(1)), lecture_intent_attract(increase/r(1))   
 
 ## Pattern: forbidden_trivial_result  
-**Description:** Defines a named resource as not being able to be modified in a given direction by any free/trivial outcome  
-**Shape:** `:- result(O, modify(<direction>,resource(<resource>))), super_trivial(O).`
-**Varies:** direction, resource
-**Occurrences:** lecture_intent_attract(increase/r(1))
+**Description:** Defines a named resource as not being able to be modified in a given direction by any free/trivial outcome   
+**Shape:** `:- result(O, modify(<direction>,resource(<resource>))), super_trivial(O).`  
+**Varies:** direction, resource  
+**Occurrences:** lecture_intent_attract(increase/r(1))  
 
 ## No pattern yet   
 revisit if more than 2 files show these shapes.   
