@@ -9,19 +9,19 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `#const <name> = <int>.`  
 **Varies:** the integer values only.  
 **Fixed:** the 12 constant names themselves (min/max entities, resources, outcomes, timers, end_outcomes, resource_change_per, conditions_per). Need to confirm if all files set all 12.  
-**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12)  
+**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12), new_un_intent (12/12)  
 
 ## Pattern: required_quality
 **Description:** Requires a named reading-quality to hold somewhere in the generated game.  
 **Shape:** `required(<quality>).`  
 **Varies:** the quality name which drawn from the readings.lp vocabulary (~25 values, e.g. sharing, maintenance, help, hurt, tradeoff...).  
-**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination)  
+**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination), new_un_intent(maintenance)  
 
 ## Pattern: entity_label / resource_label
 **Description:** Assigns a display label, resources adds a visibility mode.  
 **Shape:** `label(<entity_id>, <label>).` / `label(<resource_id>, <label>, <visibility>).`  
 **Varies:** id, label; visibility (resource only: write | private | read | read_only(interpreter does not include)).  
-**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write)
+**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write), new_un_intent(e1, e2, e3; confidence/write)
 
 ## Pattern: label_rule
 **Description:** Derive this label when this reading holds  
@@ -45,7 +45,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Requires a specific reading on a specific target.  
 **Shape:** `:- not reading(<quality>, <target>).`  
 **Varies:** quality; unary over resource/entity, special constants (game; player within relations), relational, and wildcard condition targets (`control_event(_)`).  
-**Occurrences:** dinner_intent: good/resource (unary), sharing/relation (relational), maintenance/resource (unary), dean_intent: maintenance/resource (unary), survive/entity(unary), help/relation(relational), good/resource (unary), difficulty/resource (unary), lecture_intent: hand_eye_coordination/game (unary), risk_reward/`control_event(_)` (unary), good/resource (unary), maintenance/resource (unary); lecture_intent_attract: good/resource (unary), maintenance/resource (unary), lecture_intent_avoid: hand_eye_coordination/game (unary), good/resource (unary), maintenance/resource (unary), lecture_intent_avoid_diff: hand_eye_coordination/game (unary), risk_reward/`control_event(_)` (unary), good/resource (unary), maintenance/resource (unary), lecture_intent_avoid_sim: hand_eye_coordination/game (unary), risk_reward/control_event(_) (unary), good/resource (unary), maintenance/resource (unary); lecture_intent_clear: hand_eye_coordination/game (unary), lecture_intent_clear_diff: hand_eye_coordination/game (unary); new_dean_intent: difficulty/resource (unary)  
+**Occurrences:** dinner_intent: good/resource (unary), sharing/relation (relational), maintenance/resource (unary), dean_intent: maintenance/resource (unary), survive/entity(unary), help/relation(relational), good/resource (unary), difficulty/resource (unary), lecture_intent: hand_eye_coordination/game (unary), risk_reward/`control_event(_)` (unary), good/resource (unary), maintenance/resource (unary); lecture_intent_attract: good/resource (unary), maintenance/resource (unary), lecture_intent_avoid: hand_eye_coordination/game (unary), good/resource (unary), maintenance/resource (unary), lecture_intent_avoid_diff: hand_eye_coordination/game (unary), risk_reward/`control_event(_)` (unary), good/resource (unary), maintenance/resource (unary), lecture_intent_avoid_sim: hand_eye_coordination/game (unary), risk_reward/control_event(_) (unary), good/resource (unary), maintenance/resource (unary); lecture_intent_clear: hand_eye_coordination/game (unary), lecture_intent_clear_diff: hand_eye_coordination/game (unary); new_dean_intent: difficulty/resource (unary), , new_un_intent: produces/relation (relational), consumes/relation (relational)    
 **Note:** compound readings (goal(produce), stakes(high)) exist in readings.lp but no instance seen yet in files cataloged so far.
 
 ## Pattern: label_enum
@@ -65,7 +65,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Requires or forbids named engine-derived property to hold for the entity  
 **Shape:** `:- not <property>(entity(<entity>)).` \ `:- <property>(entity(<entity>)).`  
 **Varies:** entity, property, polarity  
-**Occurrences:** dinner_intent (require/constant/e(2)), dean_intent (forbid/many/e(1), require/computer_controls(e(2))), lecture_intent_clear (require/player_controls(e(1)), require/computer_controls(e(2))), lecture_intent_clear_diff (require/player_controls(e(1)), require/computer_controls(e(2))), lecture_intent_drop(require/player_controls(e(1)), require/computer_controls(e(2))), new_dean_intent(forbid/computer_controls(e(1)))
+**Occurrences:** dinner_intent (require/constant/e(2)), dean_intent (forbid/many/e(1), require/computer_controls(e(2))), lecture_intent_clear (require/player_controls(e(1)), require/computer_controls(e(2))), lecture_intent_clear_diff (require/player_controls(e(1)), require/computer_controls(e(2))), lecture_intent_drop(require/player_controls(e(1)), require/computer_controls(e(2))), new_dean_intent(forbid/computer_controls(e(1))), new_un_intent(forbid/many/e(1), require/player_controls(e1), forbid/player_controls(e2), forbid/player_controls(e3), forbid/frivolous/r(1))  
 
 ## Pattern: entity_relationship_requirement
 **Description:** Defines a required binary relationship between entities  
@@ -109,19 +109,19 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Forbids a generated game from using a given control scheme.  
 **Shape:** `:- controlScheme(_,<control_scheme>).`  
 **Varies:** control_scheme (listed in generation_atoms.lp: indirectControls: click_and_drag, orbit_the_cursor, drawn_to_cursor, repeled_from_cursor, click_to_spin, click_to_move; directControls: asteroids, tank, vertical, horizontal, cardinal)  
-**Occurrences:** lecture_intent(orbit_the_cursor, repeled_from_cursor), lecture_intent_attract (orbit_the_cursor, repeled_from_cursor), lecture_intent_avoid (orbit_the_cursor, repeled_from_cursor), lecture_intent_clear (orbit_the_cursor, repeled_from_cursor), lecture_intent_drop (orbit_the_cursor, repeled_from_cursor), new_dean_intent (orbit_the_cursor) all paired with forbidden_scheme_outcome
+**Occurrences:** lecture_intent(orbit_the_cursor, repeled_from_cursor), lecture_intent_attract (orbit_the_cursor, repeled_from_cursor), lecture_intent_avoid (orbit_the_cursor, repeled_from_cursor), lecture_intent_clear (orbit_the_cursor, repeled_from_cursor), lecture_intent_drop (orbit_the_cursor, repeled_from_cursor), new_dean_intent (orbit_the_cursor), new_un_intent (orbit_the_cursor) all paired with forbidden_scheme_outcome
 
 ## Pattern: forbidden_scheme_outcome
 **Description:** Forbids a generated game from having an outcome associated with a given control scheme.  
 **Shape:** `:- outcome(outcome(<control_scheme>(_))).`  
 **Varies:** control_scheme  
-**Occurrences:** lecture_intent(orbit_the_cursor, repeled_from_cursor), lecture_intent_attract (orbit_the_cursor, repeled_from_cursor), lecture_intent_avoid (orbit_the_cursor, repeled_from_cursor), lecture_intent_clear (orbit_the_cursor, repeled_from_cursor), lecture_intent_drop (orbit_the_cursor, repeled_from_cursor), new_dean_intent(orbit_the_cursor) all paired with control_scheme_constraint
+**Occurrences:** lecture_intent(orbit_the_cursor, repeled_from_cursor), lecture_intent_attract (orbit_the_cursor, repeled_from_cursor), lecture_intent_avoid (orbit_the_cursor, repeled_from_cursor), lecture_intent_clear (orbit_the_cursor, repeled_from_cursor), lecture_intent_drop (orbit_the_cursor, repeled_from_cursor), new_dean_intent(orbit_the_cursor), new_un_intent (orbit_the_cursor) all paired with control_scheme_constraint
 
 ## Pattern: forbidden_trigger_result
 **Description:** Forbids outcomes triggered by a given precondition type from modifying a resource in a specified direction.  
 **Shape:** `:- precondition(<trigger>,O), result(O,modify(<direction>,resource(<resource>))).` / `:- precondition(<trigger>,O), result(O,modify(<direction>,resource(<resource>),_)).`  
 **Varies:** trigger, direction, resource.  
-**Occurrences:** lecture_intent(`control_event(_)`/increase/r(1)), lecture_intent_attract(`control_event(_)`/increase/r(1)), lecture_intent_avoid (`control_event(_)`/increase/r(1)), lecture_intent_clear (`control_event(_)`/increase/r(1)), lecture_intent_drop (`control_event(_)`/increase/r(1)), new_dean_intent(`control_event(_)`/decrease/r(2), control_event(`click(_))`/_/r(2), tick/decrease/r(2))  
+**Occurrences:** lecture_intent(`control_event(_)`/increase/r(1)), lecture_intent_attract(`control_event(_)`/increase/r(1)), lecture_intent_avoid (`control_event(_)`/increase/r(1)), lecture_intent_clear (`control_event(_)`/increase/r(1)), lecture_intent_drop (`control_event(_)`/increase/r(1)), new_dean_intent(`control_event(_)`/decrease/r(2), control_event(`click(_))`/`_`/r(2), tick/decrease/r(2))), new_un_intent(control_event(click(entity(e(2))))/decrease/r(2), `control_event(_)`/decrease/r(1), control_event(_)/increase/r(1))    
 **Note:** the `tick` trigger's precondition is `precondition(tick,tick) :- outcome(tick).` — a trivial self-reference — so intent files write the collapsed form `:- result(tick,modify(...))` instead of the full `precondition(tick,O), result(O,modify(...))` form.
 
 ## Pattern: forbidden_trivial_result
@@ -131,10 +131,22 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Occurrences:** lecture_intent_attract(increase/r(1)), lecture_intent_avoid (increase/r(1)), lecture_intent_clear (increase/r(1)), lecture_intent_drop (increase/r(1)), new_dean_intent(increase/r(2))  
 
 ## Pattern: result_form_constraint
-**Description:** Forbids any generated game from containing a result that sets some value to a given color  
-**Shape:** `:- result(_, set_value(_,amount(<color>))).`  
-**Varies:** color  
-**Occurrences:** lecture_intent_avoid_diff (clear)
+**Description:** Forbids any generated game from containing a result of a given form affecting a given target, unconditionally.  
+**Shape:** `:- result(_, set_value(_,amount(<color>))).` / `:- result(_,modify(_,<target>)).`  
+**Varies:** result form (set_value | modify), color/target.  
+**Occurrences:** lecture_intent_avoid_diff (set_value/clear), new_un_intent(modify/property(_,health))
+
+## Pattern: entity_spawn_location_allowlist
+**Description:** Grants a named entity special permission to be used as a spawn location.  
+**Shape:** `entity_spawn_ok_loc(entity(<entity>)).`  
+**Varies:** entity.  
+**Occurrences:** new_un_intent(e(2))
+
+## Pattern: required_existence
+**Description:** Requires the generated game to contain at least one instance of a given generation-bound type.  
+**Shape:** `:- not <type>(_).`  
+**Varies:** type (entity | resource | outcome | timer).  
+**Occurrences:** new_un_intent(resource)
 
 ## Pattern: palette_assignment
 **Description:** Assigns a color palette based on given color.  
@@ -185,6 +197,26 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Varies:** resource, color  
 **Occurrences:** lecture_intent_clear(r(1)/clear), lecture_intent_clear_diff (r(1)/clear), lecture_intent_drop (r(1)/blue)
 
+## Pattern: forbidden_controlled_spawn
+**Description:** Forbids a player-controlled outcome from adding (spawning) an entity.  
+**Shape:** `:- outcome(O), result(O,add(<entity>,_,_)), player_controls_outcome(O).`  
+**Varies:** entity  
+**Occurrences:** new_un_intent (x2, generic form)  
+
+## Pattern: forbidden_trigger_delete
+**Description:** Forbids deletion of a given entity when a specified precondition holds on the triggering outcome.  
+**Shape:** `:- result(O,delete(entity(<entity>))), precondition(<condition>,O).`  
+**Varies:** entity, condition.  
+**Occurrences:** new_un_intent(e(3)/le(resource(r(1)),_))  
+**Note:** the observed occurrence uses bare le(...) as a precondition type, which doesn't match generation.lp's enumerated precondition constructors (compare((ge;le),...) is the real form). Likely legacy/dead under current engine. Pattern shape may still recur with a valid precondition form.
+
+## Pattern: forbidden_frivolous
+**Description:** Forbids a named resource from being derived as frivolous.  
+**Shape:** `:- frivolous(resource(<resource>)).`  
+**Varies:** resource.  
+**Occurrences:** new_un_intent(r(1))  
+**Note:** merge with allowed frivolous??
+
 ## No pattern yet
 revisit if more than 2 files show these shapes.  
 - dinner_intent is_consumed block: invents a new predicate (4 lines: 1 derivation + 3 enforcement constraints) encoding "resource gain must coincide with consuming the food entity."
@@ -198,14 +230,17 @@ revisit if more than 2 files show these shapes.
 - lecture_intent_drop lose_if_too_low block same shape as lose_if_too_high block, encoding triggering of automatic loss if specific value becomes too low.
 
 ### Overlap-family candidates
+**overlap vs. overlaps predicate name:** generation.lp only generates the plural form `overlaps(ENTITY1,ENTITY2,P)`. new_un_intent.lp independently uses `overlaps(Entity1,Entity2,true)` (plural), matching generation.lp. dean_intent and new_dean_intent's catalog entries use the singular `overlap(A,B,true)`; this is likely a catalog transcription error rather than an engine mismatch.
 Overlap preconditions combined with resource-modification across four constructs. Not yet promoted because the exact shape varies across self- vs. distinct-entity overlap, required vs. forbidden modification, and single vs. duplicate outcome.
 - **dean_intent opposite_results_on_overlap block:** derived predicate encoding that e(1) overlaps both e(2) and e(3), and those overlaps produce opposite modifications to the same resource; integrity constraint requires the derived predicate to hold.
 - **new_dean_intent self-overlap block:** forbids outcomes with a self-overlap precondition (A overlaps A) from modifying the tracked resource.
 - **new_dean_intent overlap/result block:** requires outcomes with a distinct-entity overlap precondition to also contain a resource-modification result.
 - **new_dean_intent overlap uniqueness block:** forbids two distinct outcomes with identical overlap preconditions from both modifying the tracked resource.
+- - **new_un_intent consumes-reading block:** `{ reading(consumes,relation(Entity1,Entity2)) } :- precondition(overlaps(Entity1,Entity2,true),Outcome), result(Outcome,delete(Entity2)).` derives a `consumes` reading from an overlap-then-delete pattern. 
 
 ## Anomalies
 **dummy_intent:** :- not cooldown(_,_). is an arity mismatch (engine defines cooldown/3); renders the file permanently UNSAT against current engine (verified by direct run, 0.00s solve). Possibly stale from an older engine version, or a deliberate scratch file as the name 'dummy' could support either. Will be considering required_existence style pattern if working file contains.
+**new_un_intent resource(r(2)) reference:** file bounds fix `min_resources = max_resources = 1`, so only r(1) can ever exist. The constraint `:- outcome(O), precondition(control_event(click(entity(e(2)))),O), result(O,modify(decrease,resource(r(2)))).` references r(2) and is permanently vacuous.
 
 ## Generated Constructs
 The `_diff` intent family likely appears to contain machine-generated variation rather than hand-authored intent specifications (checked with simulate.py & resulting generated game files). These files include a serialized transcription of a previously generated game through old_* predicates, along with similarity-checking predicates (same_init, same_tick, same_cause_effect), constraints on the new game that reference mangled names and cardinality constraints that are meant to limit overlap between the previous and new generated game. lecture_intent_avoid_sim only has the constraints on the new game referencing mangled names.
@@ -227,3 +262,4 @@ These constructs are excluded from the prompt schema because they are produced b
 | lecture_intent_clear_diff.lp | done |
 | lecture_intent_drop.lp | done |
 | new_dean_intent.lp | done |
+| new_un_intent.lp | done |
