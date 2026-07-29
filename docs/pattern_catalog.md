@@ -9,19 +9,19 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `#const <name> = <int>.`  
 **Varies:** the integer values only.  
 **Fixed:** the 12 constant names themselves (min/max entities, resources, outcomes, timers, end_outcomes, resource_change_per, conditions_per). Need to confirm if all files set all 12.  
-**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12), new_un_intent (12/12), scrubbing_intent (12/12)  
+**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12), new_un_intent (12/12), scrubbing_intent (12/12), scrubbing_intent_diff (12/12)  
 
 ## Pattern: required_quality
 **Description:** Requires a named reading-quality to hold somewhere in the generated game.  
 **Shape:** `required(<quality>).`  
 **Varies:** the quality name which drawn from the readings.lp vocabulary (~25 values, e.g. sharing, maintenance, help, hurt, tradeoff...).  
-**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination), new_un_intent(maintenance), scrubbing_intent(maintenance)  
+**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination), new_un_intent(maintenance), scrubbing_intent(maintenance), scrubbing_intent_diff(maintenance)  
 
 ## Pattern: entity_label / resource_label
 **Description:** Assigns a display label, resources adds a visibility mode.  
 **Shape:** `label(<entity_id>, <label>).` / `label(<resource_id>, <label>, <visibility>).`  
 **Varies:** id, label; visibility (resource only: write | private | read | read_only(interpreter does not include)).  
-**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write), new_un_intent(e1, e2, e3; confidence/write), scrubbing_intent(effort/write on r(1))
+**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write), new_un_intent(e1, e2, e3; confidence/write), scrubbing_intent(effort/write on r(1)), scrubbing_intent_diff(effort/write on r(1))
 
 ## Pattern: label_rule
 **Description:** Derive this label when this reading holds  
@@ -152,19 +152,19 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Assigns a color palette based on given color.  
 **Shape:** `palette(<color>)`  
 **Varies:** color  
-**Occurrences:** lecture_intent_clear (blue), lecture_intent_clear_diff (blue), lecture_intent_drop (blue), scrubbing_intent(orange)
+**Occurrences:** lecture_intent_clear (blue), lecture_intent_clear_diff (blue), lecture_intent_drop (blue), scrubbing_intent(orange), scrubbing_intent_diff(orange)
 
 ## Pattern: initialize_action
 **Description:** defines a declarative initialization rule that binds a resource to a baseline numeric constant at the game's initial state  
 **Shape:** `initialize(set_value(resource(<resource>),scalar(<value>))).`  
 **Varies:** resource, value  
-**Occurrences:** lecture_intent_clear (r(1)/0), lecture_intent_clear_diff (r(1)/0), lecture_intent_drop (r(1)/10), scrubbing_intent(r(1)/0)
+**Occurrences:** lecture_intent_clear (r(1)/0), lecture_intent_clear_diff (r(1)/0), lecture_intent_drop (r(1)/10), scrubbing_intent(r(1)/0), scrubbing_intent_diff(r(1)/0)
 
 ## Pattern: allowed_property
 **Description:** Whitelists a target as having a given permissive property, opting it out of default engine restrictions.  
 **Shape:** `allowed(<property>(<target>)).`  
 **Varies:** property (frivolous | monotonic | superfluous | frivolous_color, so far), target (resource(<id>) or bare color).  
-**Occurrences:** lecture_intent_clear(frivolous/r(1)), lecture_intent_clear_diff(frivolous/r(1)), lecture_intent_drop(frivolous/r(1)), new_dean_intent (frivolous/r(1), frivolous/r(2)), scrubbing_intent(frivolous/resource(r1), monotonic/orange, monotonic/resource(r1), superfluous/resource(r1), frivolous_color/orange, frivolous_color/clear) 
+**Occurrences:** lecture_intent_clear(frivolous/r(1)), lecture_intent_clear_diff(frivolous/r(1)), lecture_intent_drop(frivolous/r(1)), new_dean_intent (frivolous/r(1), frivolous/r(2)), scrubbing_intent(frivolous/resource(r1), monotonic/orange, monotonic/resource(r1), superfluous/resource(r1), frivolous_color/orange, frivolous_color/clear), scrubbing_intent_diff(monotonic/orange, monotonic/resource(r1), monotonic/r1(bare), superfluous/resource(r1)) 
 
 ## Pattern: label_mutex  
 **Description:** Prevents two specified entities from simultaneously being assigned the same label.  
@@ -221,26 +221,26 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Requires a target to change monotonically in a specified direction over the course of the game.  
 **Shape:** `:- not monotonic(<target>,<direction>).`  
 **Varies:** target (resource(<id>) or bare color), direction (increase | decrease).  
-**Occurrences:** scrubbing_intent(orange/decrease, resource(r(1))/increase)  
+**Occurrences:** scrubbing_intent(orange/decrease, resource(r(1))/increase), scrubbing_intent_diff(orange/decrease, resource(r(1))/increase)  
 
 ## Pattern: required_initialize
-**Description:** Requires a specific initialize fact to hold at game start.  
-**Shape:** `:- not initialize(<initialize_term>).`  
-**Varies:** the initialize term.  
-**Occurrences:** scrubbing_intent(fill(all,orange))
+**Description:** Requires or forbids a specific initialize fact.  
+**Shape:** `:- not initialize(<term>).` / `:- initialize(<term>).`  
+**Varies:** polarity (require | forbid), the initialize term (may contain wildcards).  
+**Occurrences:** scrubbing_intent(require/fill(all,orange)), scrubbing_intent_diff(require/fill(all,orange), forbid/set_draggable(_,true))
 
 ## Pattern: asserted_reading
 **Description:** Directly asserts that a reading holds, as a fact, rather than requiring or deriving it conditionally.  
 **Shape:** `reading(<quality>,<target>).`  
 **Varies:** quality, target.  
-**Occurrences:** scrubbing_intent(bad/orange)  
+**Occurrences:** scrubbing_intent(bad/orange), scrubbing_intent_diff(bad/orange)  
 **Note:** only target observed thus far is a color.
 
 ## Pattern: required_property_existence
 **Description:** Requires that some object in the generated game have a given property.  
 **Shape:** `:- not <property>(_).`  
 **Varies:** property.  
-**Occurrences:** scrubbing_intent(player_controls)  
+**Occurrences:** scrubbing_intent(player_controls), scrubbing_intent_diff(player_controls)  
 
 ## No pattern yet
 revisit if more than 2 files show these shapes.  
@@ -254,7 +254,7 @@ revisit if more than 2 files show these shapes.
 - lecture_intent_clear lose_if_too_high block: Also invents a predicate, derivation and enforcement. Encodes the triggering of an automatic loss if a specific tracked value becomes too high. This block appears in lecture_intent_clear_diff as well.
 - lecture_intent_drop lose_if_too_low block same shape as lose_if_too_high block, encoding triggering of automatic loss if specific value becomes too low.
 - **scrubbing_intent result co-occurrence pair:** `:- result(O,modify(increase,_)), not result(O,clear(_)). / :- result(O,clear(_)), not result(O,modify(increase,_)).` is a biconditional pair requiring that any outcome modifying-increase also clears, and vice versa, on the same outcome. Only one occurrence (as a matched pair),
-- **scrubbing_intent player_model-conditioned result requirement:** `:- player_model(O,player_must_do), not result(O,modify(increase,resource(r(1)))).` requires that any outcome tagged player_must_do also increases r(1).
+- **scrubbing_intent player_model-conditioned result requirement:** `:- player_model(O,player_must_do), not result(O,modify(increase,resource(r(1)))).` requires that any outcome tagged player_must_do also increases r(1). This is also present in scrubbing_intent_diff.lp.
 
 ### Overlap-family candidates
 **overlap vs. overlaps predicate name:** generation.lp only generates the plural form `overlaps(ENTITY1,ENTITY2,P)`. new_un_intent.lp independently uses `overlaps(Entity1,Entity2,true)` (plural), matching generation.lp. dean_intent and new_dean_intent's catalog entries use the singular `overlap(A,B,true)`; this is likely a catalog transcription error rather than an engine mismatch.
@@ -271,7 +271,7 @@ Overlap preconditions combined with resource-modification across four constructs
 **scrubbing_intent monotonic(r(1)) bare-constant usage:** `allowed(monotonic(r(1))).` uses r(1) unwrapped, while every other occurrence in this file and elsewhere wraps resource ids as `resource(r(1))`. Likely an authoring typo producing a vacuous fact (r(1) as a bare constant is not the same term as resource(r(1))).
 
 ## Generated Constructs
-The `_diff` intent family likely appears to contain machine-generated variation rather than hand-authored intent specifications (checked with simulate.py & resulting generated game files). These files include a serialized transcription of a previously generated game through old_* predicates, along with similarity-checking predicates (same_init, same_tick, same_cause_effect), constraints on the new game that reference mangled names and cardinality constraints that are meant to limit overlap between the previous and new generated game. lecture_intent_avoid_sim only has the constraints on the new game referencing mangled names.
+The `_diff` intent family appears to contain machine-generated variation rather than hand-authored intent specifications (checked with simulate.py & resulting generated game files). These files include a serialized transcription of a previously generated game through old_* predicates, along with similarity-checking predicates (same_init, same_tick, same_cause_effect), constraints on the new game that reference mangled names and cardinality constraints that are meant to limit overlap between the previous and new generated game. lecture_intent_avoid_sim only has the constraints on the new game referencing mangled names.
 
 These constructs are excluded from the prompt schema because they are produced by the generation pipeline rather than derived from natural language intent descriptions. The schema only models constructs that an LLM could reasonably generate from a prompt.
 
@@ -292,3 +292,4 @@ These constructs are excluded from the prompt schema because they are produced b
 | new_dean_intent.lp | done |
 | new_un_intent.lp | done |
 | scrubbing_intent.lp | done |
+| scrubbing_intent_diff.lp | done |
