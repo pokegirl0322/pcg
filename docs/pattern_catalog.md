@@ -9,19 +9,19 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Shape:** `#const <name> = <int>.`  
 **Varies:** the integer values only.  
 **Fixed:** the 12 constant names themselves (min/max entities, resources, outcomes, timers, end_outcomes, resource_change_per, conditions_per). Need to confirm if all files set all 12.  
-**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12), new_un_intent (12/12), scrubbing_intent (12/12), scrubbing_intent_diff (12/12)  
+**Occurrences:** dinner_intent (12/12), dummy_intent(12/12), dean_intent(12/12), lecture_intent(12/12), lecture_intent_attract(12/12), lecture_intent_avoid(12/12), lecture_intent_avoid_diff (12/12), lecture_intent_avoid_sim(12/12), lecture_intent_clear(12/12), lecture_intent_clear_diff (12/12), lecture_intent_drop(12/12), new_dean_intent (12/12), new_un_intent (12/12), scrubbing_intent (12/12), scrubbing_intent_diff (12/12), travel_intent (12/12)  
 
 ## Pattern: required_quality
 **Description:** Requires a named reading-quality to hold somewhere in the generated game.  
 **Shape:** `required(<quality>).`  
 **Varies:** the quality name which drawn from the readings.lp vocabulary (~25 values, e.g. sharing, maintenance, help, hurt, tradeoff...).  
-**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination), new_un_intent(maintenance), scrubbing_intent(maintenance), scrubbing_intent_diff(maintenance)  
+**Occurrences:** dinner_intent (sharing, maintenance), dean_intent(survive, help, maintenance), lecture_intent(hand_eye_coordination, risk_reward, maintenance), lecture_intent_attract(maintenance), lecture_intent_avoid (hand_eye_coordination, maintenance), lecture_intent_avoid_diff (hand_eye_coordination, maintenance, risk_reward), lecture_intent_avoid_sim (hand_eye_coordination, maintenance, risk_reward), lecture_intent_clear (hand_eye_coordination), lecture_intent_clear_diff (hand_eye_coordination), new_un_intent(maintenance), scrubbing_intent(maintenance), scrubbing_intent_diff(maintenance), travel_intent(tradeoff)  
 
 ## Pattern: entity_label / resource_label
 **Description:** Assigns a display label, resources adds a visibility mode.  
 **Shape:** `label(<entity_id>, <label>).` / `label(<resource_id>, <label>, <visibility>).`  
 **Varies:** id, label; visibility (resource only: write | private | read | read_only(interpreter does not include)).  
-**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write), new_un_intent(e1, e2, e3; confidence/write), scrubbing_intent(effort/write on r(1)), scrubbing_intent_diff(effort/write on r(1))
+**Occurrences:** dinner_intent (food, friend; satiation/write, though note the satiation label here is conditional, see label_rule), dean_intent (yourself, help, harm; composure/write, tension/read_only), lecture_intent(concentration/write; e1), lecture_intent_attract(e1), lecture_intent_avoid(e1), lecture_intent_avoid_diff (e1), lecture_intent_avoid_sim (e1), lecture_intent_clear (e1), lecture_intent_clear_diff (e1), lecture_intent_drop (e1, concentration/write), new_dean_intent(tension/read_only, power/write), new_un_intent(e1, e2, e3; confidence/write), scrubbing_intent(effort/write on r(1)), scrubbing_intent_diff(effort/write on r(1)), travel_intent(money/write on r1, co2/write on r2, fame/write on r3)
 
 ## Pattern: label_rule
 **Description:** Derive this label when this reading holds  
@@ -83,7 +83,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Requires or forbids the game to contain the named mode change.  
 **Shape:** `:- not action(mode_change(<mode>)).` \ `:- action(mode_change(<mode>)).` \ `:- action(mode_change(_)).`  
 **Varies:** mode: can consist of narrative_gating, narrative_progress, game_loss, game_win (as in generation_atoms.lp) or a wildcard forbidding any mode change.    
-**Occurrences:** dinner_intent (require/narrative_gating), dean_intent (forbid/game_win) x2, lecture_intent(require/game_loss), lecture_intent_attract (require/game_loss), lecture_intent_avoid (require/game_loss), lecture_intent_avoid_diff (require/game_loss), lecture_intent_avoid_sim (require/game_loss), lecture_intent_clear(require/game_loss), lecture_intent_clear_diff (require/game_loss), lecture_intent_drop(require/game_loss), scrubbing_intent(forbid/wildcard) all but dean_intent and scrubbing_intent appeared with mode_change_cap  
+**Occurrences:** dinner_intent (require/narrative_gating), dean_intent (forbid/game_win) x2, lecture_intent(require/game_loss), lecture_intent_attract (require/game_loss), lecture_intent_avoid (require/game_loss), lecture_intent_avoid_diff (require/game_loss), lecture_intent_avoid_sim (require/game_loss), lecture_intent_clear(require/game_loss), lecture_intent_clear_diff (require/game_loss), lecture_intent_drop(require/game_loss), scrubbing_intent(forbid/wildcard), travel_intent(forbid/wildcard) all but dean_intent, scrubbing_intent and travel_intent appeared with mode_change_cap  
 **Note:** shape is similar to require_draw and require_clear, and could be abstracted to :- not action(<action_term>) including polarity. Choice was made to not abstract considering different arities.
 
 ## Pattern: require_draw
@@ -164,7 +164,7 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Description:** Whitelists a target as having a given permissive property, opting it out of default engine restrictions.  
 **Shape:** `allowed(<property>(<target>)).`  
 **Varies:** property (frivolous | monotonic | superfluous | frivolous_color, so far), target (resource(<id>) or bare color).  
-**Occurrences:** lecture_intent_clear(frivolous/r(1)), lecture_intent_clear_diff(frivolous/r(1)), lecture_intent_drop(frivolous/r(1)), new_dean_intent (frivolous/r(1), frivolous/r(2)), scrubbing_intent(frivolous/resource(r1), monotonic/orange, monotonic/resource(r1), superfluous/resource(r1), frivolous_color/orange, frivolous_color/clear), scrubbing_intent_diff(monotonic/orange, monotonic/resource(r1), monotonic/r1(bare), superfluous/resource(r1)) 
+**Occurrences:** lecture_intent_clear(frivolous/r(1)), lecture_intent_clear_diff(frivolous/r(1)), lecture_intent_drop(frivolous/r(1)), new_dean_intent (frivolous/r(1), frivolous/r(2)), scrubbing_intent(frivolous/resource(r1), monotonic/orange, monotonic/resource(r1), superfluous/resource(r1), frivolous_color/orange, frivolous_color/clear), scrubbing_intent_diff(monotonic/orange, monotonic/resource(r1), monotonic/r1(bare), superfluous/resource(r1)), travel_intent(monotonic/resource(r1), monotonic/resource(r2), monotonic/resource(r3)) 
 
 ## Pattern: label_mutex  
 **Description:** Prevents two specified entities from simultaneously being assigned the same label.  
@@ -242,6 +242,13 @@ Derived from analysis of the intent files in upstream Gemini (external/Gemini/as
 **Varies:** property.  
 **Occurrences:** scrubbing_intent(player_controls), scrubbing_intent_diff(player_controls)  
 
+## Pattern: forbidden_action
+**Description:** Forbids any outcome from having a given action/result form, expressed via the action/1 predicate rather than result/2.  
+**Shape:** `:- action(<action_term>).`  
+**Varies:** action term with modify(<direction>,<target>) observed in both 2-arity (direction fixed) and 3-arity (direction wildcard, second resource wildcard) forms.  
+**Occurrences:** travel_intent(modify(decrease,resource(r2)), modify(decrease,resource(r3)), modify(`_`,resource(r1),`_`), modify(`_`,resource(r2),`_`), modify(`_`,resource(r3),`_`))  
+**Note:** possible future merge with result_form_constraint.
+
 ## No pattern yet
 revisit if more than 2 files show these shapes.  
 - dinner_intent is_consumed block: invents a new predicate (4 lines: 1 derivation + 3 enforcement constraints) encoding "resource gain must coincide with consuming the food entity."
@@ -253,8 +260,10 @@ revisit if more than 2 files show these shapes.
 - lecture_intent_clear out_of_players_control block: Invents the predicate, derivation + enforcement, encoding that a game element is considered out of the player's control if it relies on a specific outcome, and the player has no control over that outcome. This block appears in lecture_intent_clear_diff as well.
 - lecture_intent_clear lose_if_too_high block: Also invents a predicate, derivation and enforcement. Encodes the triggering of an automatic loss if a specific tracked value becomes too high. This block appears in lecture_intent_clear_diff as well.
 - lecture_intent_drop lose_if_too_low block same shape as lose_if_too_high block, encoding triggering of automatic loss if specific value becomes too low.
-- **scrubbing_intent result co-occurrence pair:** `:- result(O,modify(increase,_)), not result(O,clear(_)). / :- result(O,clear(_)), not result(O,modify(increase,_)).` is a biconditional pair requiring that any outcome modifying-increase also clears, and vice versa, on the same outcome. Only one occurrence (as a matched pair),
-- **scrubbing_intent player_model-conditioned result requirement:** `:- player_model(O,player_must_do), not result(O,modify(increase,resource(r(1)))).` requires that any outcome tagged player_must_do also increases r(1). This is also present in scrubbing_intent_diff.lp.
+- scrubbing_intent result co-occurrence pair: `:- result(O,modify(increase,_)), not result(O,clear(_)). / :- result(O,clear(_)), not result(O,modify(increase,_)).` is a biconditional pair requiring that any outcome modifying-increase also clears, and vice versa, on the same outcome. Only one occurrence (as a matched pair),
+- scrubbing_intent player_model-conditioned result requirement: `:- player_model(O,player_must_do), not result(O,modify(increase,resource(r(1)))).` requires that any outcome tagged player_must_do also increases r(1). This is also present in scrubbing_intent_diff.lp.
+- travel_intent choice/tradeoff block: A large bespoke mechanic (~13 lines) defining two mutually-exclusive derived labels, `choice(O,higher)` and `choice(O,lower)`, both nondeterministically assignable to any outcome matching the same body (decrease r1, increase r2, increase r3). Enforces the mutual exclusion between the two labels on one outcome with exactly one outcome having carry each label (upper-bound-1 and lower-bound-1 cardinality constraints together); any outcome increasing r2 or r3 must carry a choice label; a derived `similar_conditions` predicate requiring the higher- and lower-labeled outcomes to share a trigger type (both control_event(`click(_)`) or both `overlaps(_)`), which is then required to hold; and a requirement that both choice-labeled outcomes be player-controlled (via player_controls_outcome/1 — see cross-reference below). Also produces three `constraint(ge/eq, result(...), result(...))` facts ordering the higher/lower outcomes' resource changes relative to each other
+
 
 ### Overlap-family candidates
 **overlap vs. overlaps predicate name:** generation.lp only generates the plural form `overlaps(ENTITY1,ENTITY2,P)`. new_un_intent.lp independently uses `overlaps(Entity1,Entity2,true)` (plural), matching generation.lp. dean_intent and new_dean_intent's catalog entries use the singular `overlap(A,B,true)`; this is likely a catalog transcription error rather than an engine mismatch.
@@ -293,3 +302,4 @@ These constructs are excluded from the prompt schema because they are produced b
 | new_un_intent.lp | done |
 | scrubbing_intent.lp | done |
 | scrubbing_intent_diff.lp | done |
+| travel_intent.lp | done |
