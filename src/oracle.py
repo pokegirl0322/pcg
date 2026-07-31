@@ -1,0 +1,1 @@
+#TODO def readings_present(intent, model) -> bool. running gemini's bidirectional readings to confirm requested readings appear in model.

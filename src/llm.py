@@ -1,0 +1,1 @@
+#TODO def prompt_to_intent(text) -> intent; natural language to ir via structured input, target is schema.Intent.model_json_schema()

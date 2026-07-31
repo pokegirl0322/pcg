@@ -1,0 +1,1 @@
+# TODO def lint(program) -> list(str) #returns anomalies/problems. if empty code is clean, run before calling clingo.
