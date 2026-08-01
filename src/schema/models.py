@@ -30,7 +30,13 @@ class ReadingRequirement(BaseModel):
     mode: Literal["required", "constraint", "asserted"] = "constraint"
 
 
+class ModeChange(BaseModel):
+    mode: Optional[Literal["narrative_gating", "narrative_progress", "game_loss", "game_win"]] = None   # None => wildcard "_"
+    polarity: Literal["require", "forbid"] = "require"
+
+
 class Intent(BaseModel):
     bounds: Bounds
     labels: list[Label] = []
     reading_requirements: list[ReadingRequirement] = []
+

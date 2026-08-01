@@ -24,3 +24,8 @@ def emit_reading(rr: ReadingRequirement) -> list[Line]:
         return [Line(f"reading({rr.quality},{rr.target}).", f"reading:{rr.quality}:asserted")]
     # default: constraint
     return [Line(f":- not reading({rr.quality},{rr.target}).", f"reading:{rr.quality}:constraint")]
+
+def emit_mode_change(rr: ModeChange) -> list[Line]:
+    m = rr.mode if rr.mode is not None else "_"
+    head = ":- not " if rr.polarity == "require" else ":- "
+    return [Line(f"{head}action(mode_change({m})).", f"mode_change.{rr.mode or 'any'}")]
