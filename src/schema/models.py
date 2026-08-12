@@ -28,6 +28,11 @@ class ReadingRequirement(BaseModel):
     quality: str                     # e.g. "good", "sharing"  (validated later vs signatures)
     target: Optional[str] = None     # e.g. "resource(r(1))"; unused when mode == "required"
     mode: Literal["required", "constraint", "asserted"] = "constraint"
+    @model_validator(mode="after")          # <-- THE VALIDATOR GOES HERE
+    def _target_required(self):
+        if self.mode != "required" and self.target is None:
+            raise ValueError("target is required unless mode == 'required'")
+        return self
 
 
 class ModeChange(BaseModel):
@@ -35,8 +40,34 @@ class ModeChange(BaseModel):
     polarity: Literal["require", "forbid"] = "require"
 
 
+class ModeChangeCap(BaseModel):
+    at_least: int
+
+
+class Count(BaseModel):
+    target: str
+    comparator: Literal["!=", "<", ">"]
+    value: int
+
+
+class PoolCount(BaseModel):
+    entity_index: int
+    low: int
+    high: int
+
+
+class Property(BaseModel):
+    property_name: str
+    entity_index: int
+    polarity: Literal["require", "forbid"] = "require"
+
+
 class Intent(BaseModel):
     bounds: Bounds
     labels: list[Label] = []
     reading_requirements: list[ReadingRequirement] = []
-
+    mode_changes: list[ModeChange] = []
+    mode_change_caps: list[ModeChangeCap] = []
+    counts: list[Count] = []
+    pool_counts: list[PoolCount] = []
+    properties: list[Property] = []
