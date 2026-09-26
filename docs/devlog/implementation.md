@@ -109,3 +109,23 @@ In this order, I hope to ensure that any errors from the testing runs will resul
 5. LabelEnum --> target + acceptable-label list (enumeration/enforcement)  
 6. CountComparison --> target, comparator, value (the total_count pattern)  
 7. RawASP --> escape hatch. A possible solution is to give it a generic pattern, something like: a head (predicate name + list of argument values) and a body (a list of conditions, each also predicate name + arguments, optionally negated) but no syntax. Another thing that could be considered is adding logging (like saying that this doesn't fit with current categories, and letting a human decide later whether to add it as a new category). However, it likely will require further investigation because designing a sufficiently expressive but constrained ASP representation depends on deeper understanding of Gemini's predicate structure and ASP semantics. For the current implementation, I will start with just logging unmatched cases and returning that to the LLM.
+
+**Date:** 8.5.26
+**Milestone: schema → compiler → solver spine working end to end (no LLM yet).**  
+**Design decisions crystallized:**  
+- **Family consolidation:** ~47 catalog patterns collapse to ~12–15 emitters by folding polarity/mode/target into fields (one reading emitter for required/constraint/asserted; one mode_change for require/forbid/wildcard).
+- **Escape hatch `derived_requirement`:** fresh head + structural-literal body + polarity (exists/absent) covers the "no pattern yet" mechanics (attract_mode, lose_if_too_high…). forall/biconditional cases (is_consumed, travel choice block) deferred to a quarantined raw_asp tier that defaults to refuse under autonomy.  
+- **Wildcards** modeled as `None → _` on a field, orthogonal to polarity (require+_ = "≥1", forbid+_ = "none").  
+- **Linter runs on the IR, not emitted text** checks reading vocab, index-in-bounds, predicate arity against a signatures table.
+- **Oracle = SAT + readings match** (Gemini's bidirectional analysis), not ground-truth answer sets, since design has no single correct output.
+
+**Literature reevaluation with two new papers repositioning the work (lit #14, #15):**
+- Ishay & Lee, *LLM+ASP* (ACL Findings 2026) and Szeider, *ASP-Bench* (NSE 2026) both use a solver-feedback self-correction loop and both report it as the primary driver of NL→ASP performance. validates loop-repair architecture.
+- LLM+ASP demonstrates a **third path I hadn't accounted for**: raw ASP + self-correction (no schema, no fine-tuning) works with a strong model. 
+- Both papers evaluate only on **well-specified problems with checkable validators/ground truth**; ASP-Bench plants solutions to guarantee solvability, designing UNSAT and ambiguity away. Open-ended design intent is exactly the case LLM+ASP names as its open question and ASP-Bench excludes by construction. I suppose that gap is undetermined, and my evaluation problem (no benchmark to score against).
+- Adopting LLM+ASP's **compact-reference finding ("context rot")**: keeping system prompt with just vocab + signatures + a few examples, not the full readings.lp / clingo manual.
+- **domain-specific "reference validator"**: building a small validator eval set from the 15 known-good intent files (NL prompt ↔ the readings that file produces = ground truth I already have).
+
+To engage the prior art honestly and likely produce the central result: run the same eval set through two systems differing in *one variable*: System A (NL → schema → compiler → ASP) vs. System B (NL → raw `.lp` directly) that share the same engine, solver, oracle, linter, model, retry budget. System B on top after System A has been finished. Metrics: readings-match, silent-vacuous rate (SAT but readings missing), engine-valid/anomaly rate (linter-scored), repair iterations, localizability, cost. Want to see if schema or self-corrective loop is most effective
+
+
