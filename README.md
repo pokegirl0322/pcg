@@ -2,7 +2,7 @@
 
 Research project on the resurrection and augmentation of **Gemini** an Answer Set
 Programming (ASP) based abstract game generator with an LLM-driven prompt → intent
-layer, applied to procedurally generating Super Mario levels.
+layer.
 
 This repository contains **only this project's own work**. Gemini itself is referenced as
 a pinned git **submodule** (see [`NOTICE.md`](NOTICE.md)); its source is not copied here.
